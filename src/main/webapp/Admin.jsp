@@ -1,0 +1,145 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1" isELIgnored="false"%>
+    
+<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import = "jakarta.servlet.http.*,jakarta.servlet.*" %>
+<%@ page import=" org.hibernate.cfg.Configuration" %>
+<%@ page import=" org.hibernate.SessionFactory" %>
+<%@ page import="org.springframework.web.servlet.ModelAndView " %>
+<%@ page import="org.springframework.stereotype.Controller " %>
+<%@ page import="productpk.product" %>
+<%@ page import="org.hibernate.Session " %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Admin</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utensils</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <style>
+    .card-img-top{
+    	width: 100%;
+   		height: 15vw;
+   		object-fit: cover;
+    }
+    </style>
+    
+    
+</head>
+<body>
+
+
+	<% 
+		String name = null;
+		int ID = (Integer) request.getAttribute("aid");
+		name = (String) request.getAttribute("username");
+	%>
+
+	<nav class="navbar navbar-expand-lg navbar-light bg-light" style="background: linear-gradient(-135deg, #c850c0, #4158d0)">
+        <a class="navbar-brand" href="#">Utensils</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav" >
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="Admin?aid=${aid}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="AdminAddProduct?aid=${aid}">Add Product</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="AdminInventory?aid=${aid}">Inventory</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="AdminVeiwCustomer?aid=${aid}">Customers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="Logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <br>
+      
+      <% if(name != null){ %>
+       <div class="text-center fs-4" style="font-size: 18px; margin-top: 20px; " >Welcome ${aname} In Utensils Shop</div>  
+       <% } %>
+       
+       
+       
+       
+             
+       <%
+       try {
+       	Configuration cfg = new Configuration().configure().addAnnotatedClass(product.class);			
+       	cfg.configure("hibernate.cfg.xml");
+       	SessionFactory factory = cfg.buildSessionFactory();
+       	Session Session = factory.openSession();
+       	
+       	
+       	
+       	java.util.List li = Session.createQuery("from product").list();
+       	java.util.Iterator it=li.iterator();
+       	int col = 0 ;
+       	while(it.hasNext()) {
+       		Object o = (Object)it.next();
+       		 product rs = (product)o;
+       	     col++;
+       		 if(col % 3 == 1 ){ %>
+       			 <div class="container" style="margin-top: 25px;">
+       			 <div class="row"> 
+       			 
+       			 <% }  %>
+       	     
+       	     
+       	     <div class="col-sm-4 card-group ">
+                <div class="card" style="width: 18rem;">
+                     <img src="<% out.print(rs.getPimage()); %>" class="card-img-top"  style="hight='300'; width='300'" >
+                    <div class="card-body">
+                      <h5 class="card-title"><% out.print(rs.getPname()); %></h5>
+                      <p class="card-text">Price : <% out.print(rs.getPrice()); %></p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">Available Quantity : <% out.print(rs.getQuantity()); %></li>
+                      <li class="list-group-item">Category : <% out.print(rs.getCategory()); %></li>
+                      <li class="list-group-item">Type : <% out.print(rs.getType()); %></li>
+                    </ul>
+                     
+                  </div>
+            </div>
+
+
+               
+                <%  
+                
+                if(col % 3 == 0){ %>
+      			</div> </div>  
+      			 <%  } 
+       	}
+       	Session.close();
+       	factory.close();
+       }
+       catch(Exception ex) {
+       	System.out.println(ex);	
+       }
+
+
+
+                
+                 %>
+             
+      
+       <br> <br> <br>
+	  
+</body>
+</html>
